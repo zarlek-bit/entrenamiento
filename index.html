@@ -11,243 +11,387 @@
 <title>Bailarín Atleta</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0a0a0a;--dark:#111217;--card:#16181f;--border:#242630;--accent:#c8f535;--accent2:#f5a623;--accent3:#35c8f5;--text:#e8e8ec;--muted:#6b6f7a;--red:#f55353;}
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6;}
-@supports(padding-top: env(safe-area-inset-top)){.nav{padding-top:env(safe-area-inset-top);height:calc(46px + env(safe-area-inset-top));}.page{padding-bottom:calc(60px + env(safe-area-inset-bottom));}}
-
-
+:root{
+  --black:#0a0a0a;--card:#16181f;--border:#242630;
+  --accent:#c8f535;--accent2:#f5a623;--accent3:#35c8f5;
+  --text:#e8e8ec;--muted:#6b6f7a;--red:#f55353;
+  --tab-h:60px;
+  --si:env(safe-area-inset-bottom,0px);
+  --st:env(safe-area-inset-top,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;overflow:hidden;}
 
 /* APP */
-#app{display:none;height:100vh;display:none;flex-direction:column;}
+#app{height:100%;display:flex;flex-direction:column;}
 
-/* NAV */
-.nav{background:var(--card);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;height:46px;}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;color:var(--accent);white-space:nowrap;}
-.nav-sep{width:1px;height:18px;background:var(--border);}
-.nav-links{display:flex;gap:2px;overflow-x:auto;}
-.nl{background:none;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:6px 12px;cursor:pointer;border-radius:2px;white-space:nowrap;transition:all .15s;}
-.nl:hover{color:var(--text);background:rgba(255,255,255,.04);}
-.nl.on{color:var(--accent);background:rgba(200,245,53,.08);}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
-#save-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:0;transition:opacity .3s;}
-#out-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;padding:5px 12px;cursor:pointer;border-radius:2px;transition:all .15s;}
-#out-btn:hover{color:var(--red);border-color:rgba(245,83,83,.4);}
+/* TOP BAR — desktop only */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;
+  display:none;align-items:center;gap:14px;
+  height:calc(50px + var(--st));padding-top:var(--st);flex-shrink:0;}
+.topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--accent);}
+.topbar-links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+.topbar-links::-webkit-scrollbar{display:none;}
+.tl{background:none;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);padding:6px 14px;cursor:pointer;
+  border-radius:2px;white-space:nowrap;transition:all .15s;}
+.tl.on{color:var(--accent);background:rgba(200,245,53,.08);}
+.topbar-right{margin-left:auto;flex-shrink:0;}
+#save-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:0;transition:opacity .4s;}
 
 /* CONTENT */
-.content{flex:1;overflow-y:auto;}
-.page{display:none;padding:28px 28px 60px;}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+/* Mobile: add safe-top padding + bottom nav space */
+.page{display:none;padding:calc(var(--st) + 16px) 16px calc(var(--tab-h) + var(--si) + 20px);}
 .page.on{display:block;}
 
+/* BOTTOM NAV — mobile */
+.bottomnav{
+  background:var(--card);border-top:1px solid var(--border);
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--tab-h) + var(--si));
+  padding-bottom:var(--si);
+  z-index:200;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+}
+.bn{background:none;border:none;color:var(--muted);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:6px 2px;transition:color .15s;}
+.bn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.bn span{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;}
+.bn.on{color:var(--accent);}
+
 /* SECTION HEADERS */
-.sh{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;display:flex;align-items:center;gap:12px;margin-bottom:6px;}
-.sh .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
-.sd{color:var(--muted);font-size:13px;max-width:560px;margin-bottom:24px;padding-left:20px;}
+.sh{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;
+  display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.sh .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.sd{color:var(--muted);font-size:13px;margin-bottom:18px;padding-left:17px;}
+.div{height:1px;background:var(--border);margin:18px 0;}
 
-/* WEEK TABS */
-.wtabs{display:flex;gap:3px;margin-bottom:20px;flex-wrap:wrap;}
-.wt{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 13px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;border-radius:2px;letter-spacing:1px;transition:all .15s;}
-.wt:hover{border-color:var(--accent);color:var(--text);}
-.wt.on{background:rgba(200,245,53,.12);border-color:var(--accent);color:var(--accent);}
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:18px;}
+.stat-card{background:var(--card);padding:14px 16px;border-left:3px solid var(--accent);}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;}
+.stat-lbl{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
 
-/* WEEK MAP */
-.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:24px;}
-@media(max-width:600px){.wgrid{grid-template-columns:1fr 1fr;}}
-.wcard{background:var(--card);padding:20px;border-top:2px solid transparent;position:relative;overflow:hidden;}
-.wcard.w1{border-color:#3a3f50;} .wcard.w2{border-color:#4a5060;} .wcard.w3{border-color:var(--accent3);} .wcard.w4{border-color:var(--accent2);} .wcard.w5{border-color:var(--accent);} .wcard.w6{border-color:var(--red);}
-.wcard::after{content:attr(data-w);position:absolute;right:10px;bottom:-10px;font-family:'Bebas Neue',sans-serif;font-size:70px;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;}
-.wn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
-.w1 .wn{color:#6b7080;} .w2 .wn{color:#7a8090;} .w3 .wn{color:var(--accent3);} .w4 .wn{color:var(--accent2);} .w5 .wn{color:var(--accent);} .w6 .wn{color:var(--red);}
-.wf{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:10px;}
-.wd{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
-.rbar{display:flex;align-items:center;gap:6px;}
-.rbar span{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
+/* WEEK GRID */
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:18px;}
+.wcard{background:var(--card);padding:14px;border-top:2px solid transparent;position:relative;overflow:hidden;}
+.wcard::after{content:attr(data-w);position:absolute;right:6px;bottom:-8px;font-family:'Bebas Neue',sans-serif;font-size:56px;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;}
+.wcard.w1{border-color:#3a3f50;}.wcard.w2{border-color:#4a5060;}.wcard.w3{border-color:var(--accent3);}
+.wcard.w4{border-color:var(--accent2);}.wcard.w5{border-color:var(--accent);}.wcard.w6{border-color:var(--red);}
+.wn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.w1 .wn{color:#6b7080;}.w2 .wn{color:#7a8090;}.w3 .wn{color:var(--accent3);}
+.w4 .wn{color:var(--accent2);}.w5 .wn{color:var(--accent);}.w6 .wn{color:var(--red);}
+.wf{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;margin-bottom:6px;}
+.wd{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:8px;}
+.rbar{display:flex;align-items:center;gap:5px;}
+.rbar>span{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;}
 .rb{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
 .rf{height:100%;border-radius:2px;}
-.w1 .rf{width:40%;background:#6b7080;} .w2 .rf{width:50%;background:#7a8090;} .w3 .rf{width:65%;background:var(--accent3);} .w4 .rf{width:70%;background:var(--accent2);} .w5 .rf{width:85%;background:var(--accent);} .w6 .rf{width:55%;background:var(--red);}
-.rv{font-family:'Bebas Neue',sans-serif;font-size:16px;}
-.w1 .rv{color:#6b7080;} .w2 .rv{color:#7a8090;} .w3 .rv{color:var(--accent3);} .w4 .rv{color:var(--accent2);} .w5 .rv{color:var(--accent);} .w6 .rv{color:var(--red);}
+.w1 .rf{width:40%;background:#6b7080;}.w2 .rf{width:50%;background:#7a8090;}.w3 .rf{width:65%;background:var(--accent3);}
+.w4 .rf{width:70%;background:var(--accent2);}.w5 .rf{width:85%;background:var(--accent);}.w6 .rf{width:55%;background:var(--red);}
+.rv{font-family:'Bebas Neue',sans-serif;font-size:14px;}
+.w1 .rv{color:#6b7080;}.w2 .rv{color:#7a8090;}.w3 .rv{color:var(--accent3);}
+.w4 .rv{color:var(--accent2);}.w5 .rv{color:var(--accent);}.w6 .rv{color:var(--red);}
 
 /* PRINCIPLES */
-.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
-@media(max-width:600px){.pgrid{grid-template-columns:1fr;}}
-.pcard{background:var(--card);padding:22px;border-bottom:2px solid var(--border);}
-.pnum{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--border);line-height:1;margin-bottom:6px;}
-.ptit{font-weight:600;font-size:13px;margin-bottom:6px;}
-.ptxt{font-size:11px;color:var(--muted);line-height:1.7;}
+.pgrid{display:grid;grid-template-columns:1fr;gap:2px;}
+.pcard{background:var(--card);padding:16px;border-bottom:2px solid var(--border);}
+.pnum{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--border);line-height:1;margin-bottom:4px;}
+.ptit{font-weight:600;font-size:13px;margin-bottom:4px;}
+.ptxt{font-size:12px;color:var(--muted);line-height:1.7;}
 
-/* EXERCISE TABLE */
-.day-blk{margin-bottom:24px;}
-.dh{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
-.dbadge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;}
-.bl{background:rgba(53,200,245,.15);color:var(--accent3);}
-.bm{background:rgba(200,245,53,.15);color:var(--accent);}
-.dtit{font-size:13px;font-weight:500;}
-.dsub{font-size:10px;color:var(--muted);margin-left:auto;font-family:'DM Mono',monospace;}
+/* TABS */
+.wtabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}
+.wt{background:var(--card);border:1px solid var(--border);color:var(--muted);
+  padding:9px 16px;font-family:'DM Mono',monospace;font-size:12px;
+  cursor:pointer;border-radius:4px;letter-spacing:1px;transition:all .15s;min-height:44px;}
+.wt.on{background:rgba(200,245,53,.12);border-color:var(--accent);color:var(--accent);}
+
+/* TRACKER CONTROLS */
+.trk-top{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.trk-bw{display:flex;align-items:center;gap:8px;}
+.trk-bw-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.trk-btns{display:flex;gap:6px;}
+
+/* WEEK BADGE */
+.week-badge{background:var(--card);padding:12px 14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;border-left:3px solid;border-radius:2px;}
+
+/* EXERCISE CARDS */
+.day-hdr{background:var(--card);padding:10px 14px;margin:12px 0 8px;
+  display:flex;align-items:center;gap:8px;border-left:3px solid;}
+.day-hdr-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;}
+.ex-card{background:rgba(22,24,31,.8);border:1px solid var(--border);
+  border-radius:6px;padding:14px;margin-bottom:8px;}
+.ex-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px;}
+.ex-name{font-weight:600;font-size:13px;line-height:1.3;}
+.ex-muscle{font-size:11px;color:var(--muted);margin-top:2px;}
+.tbadge{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);
+  background:rgba(200,245,53,.08);padding:5px 9px;border-radius:3px;
+  border:1px solid rgba(200,245,53,.2);white-space:nowrap;flex-shrink:0;}
+.ex-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.in-grp{display:flex;flex-direction:column;gap:4px;}
+.in-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.ti{background:var(--black);border:1px solid var(--border);color:var(--text);
+  padding:10px;font-family:'DM Mono',monospace;font-size:15px;
+  width:100%;border-radius:4px;text-align:center;transition:border-color .15s;
+  -webkit-appearance:none;min-height:44px;}
+.ti:focus{outline:none;border-color:var(--accent);}
+.ti.ok{border-color:rgba(200,245,53,.5);color:var(--accent);}
+.ti-note{width:100%;background:var(--black);border:1px solid var(--border);
+  color:var(--text);padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;
+  border-radius:4px;transition:border-color .15s;min-height:44px;}
+.ti-note:focus{outline:none;border-color:rgba(200,245,53,.4);}
+.ti-note.ok{border-color:rgba(200,245,53,.3);}
+
+/* CHART */
+.chart-wrap{background:var(--card);padding:16px;position:relative;height:100px;margin-top:14px;border-radius:4px;}
+.chart-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;text-align:center;padding:16px;}
+
+/* NOTES */
+.notes-ta{width:100%;background:var(--card);border:1px solid var(--border);
+  color:var(--text);padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;
+  resize:vertical;min-height:80px;border-radius:4px;line-height:1.6;-webkit-appearance:none;}
+.notes-ta:focus{outline:none;border-color:var(--accent);}
+
+/* MEDIDAS */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;}
+.mcard{background:var(--card);padding:14px;}
+.mlbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.mi{background:var(--black);border:1px solid var(--border);color:var(--text);
+  padding:10px;font-family:'DM Mono',monospace;font-size:18px;
+  width:100%;border-radius:4px;text-align:center;-webkit-appearance:none;min-height:44px;}
+.mi:focus{outline:none;border-color:var(--accent2);}
+.mi.ok{border-color:rgba(245,166,35,.5);color:var(--accent2);}
+.mu{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;}
+
+/* COMP */
+.comp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px;}
+.ctbl{width:100%;border-collapse:collapse;font-size:11px;min-width:280px;}
+.ctbl th{padding:8px 10px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-align:center;background:var(--card);}
+.ctbl td{padding:8px 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.03);background:rgba(22,24,31,.5);}
+.ctbl td:first-child{text-align:left;color:var(--muted);}
+
+/* PROGRAMA TABLES */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:2px;}
+.table-wrap table{min-width:480px;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead tr{border-bottom:1px solid var(--border);}
-thead th{text-align:left;padding:7px 10px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:400;}
+thead th{text-align:left;padding:8px 10px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:400;}
 tbody tr{border-bottom:1px solid rgba(255,255,255,.03);}
-tbody tr:hover{background:rgba(255,255,255,.02);}
-tbody td{padding:10px 10px;vertical-align:top;}
-.en{font-weight:500;font-size:12px;}
-.em{font-size:10px;color:var(--muted);margin-top:2px;}
-.es{font-family:'DM Mono',monospace;font-size:12px;}
+tbody td{padding:10px;vertical-align:top;}
+.en{font-weight:500;font-size:12px;}.em{font-size:10px;color:var(--muted);margin-top:2px;}
+.es{font-family:'DM Mono',monospace;font-size:11px;}
 .ntag{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;margin-top:2px;}
 .ne{background:rgba(53,200,245,.1);color:var(--accent3);}
 .nc{background:rgba(200,245,53,.1);color:var(--accent);}
 .nu{background:rgba(245,166,35,.1);color:var(--accent2);}
 .ni{background:rgba(245,83,83,.1);color:var(--red);}
+.dh{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.dbadge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:2px;}
+.bl{background:rgba(53,200,245,.15);color:var(--accent3);}
+.bm{background:rgba(200,245,53,.15);color:var(--accent);}
+.dtit{font-size:13px;font-weight:500;}
+.dsub{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
 
-/* TRACKER */
-.trk-hdr{background:var(--card);padding:12px 16px;margin-bottom:2px;display:flex;align-items:center;gap:10px;border-left:3px solid var(--border);}
-.trk-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;}
-.ti{background:var(--black);border:1px solid var(--border);color:var(--text);padding:5px 8px;font-family:'DM Mono',monospace;font-size:12px;width:68px;border-radius:2px;text-align:center;transition:border-color .15s;}
-.ti:focus{outline:none;border-color:var(--accent);}
-.ti.ok{border-color:rgba(200,245,53,.4);color:var(--accent);}
-.ti.wide{width:140px;}
-.tbadge{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);background:var(--black);padding:2px 7px;border-radius:2px;border:1px solid var(--border);}
+/* ALERT */
+.alert{background:rgba(200,245,53,.05);border:1px solid rgba(200,245,53,.2);border-radius:4px;
+  padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-top:12px;}
+.alert-txt{font-size:11px;color:var(--text);line-height:1.7;}
+.alert-txt strong{color:var(--accent);}
 
-/* BW ROW */
-.bw-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
-.bw-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-
-/* CHART */
-.chart-wrap{background:var(--card);padding:20px;position:relative;height:110px;margin-top:20px;}
-.chart-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;}
-
-/* NOTES */
-.notes-ta{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px;font-family:'DM Sans',sans-serif;font-size:12px;resize:vertical;min-height:70px;border-radius:2px;line-height:1.6;margin-top:4px;}
-.notes-ta:focus{outline:none;border-color:var(--accent);}
-
-/* MEDIDAS */
-.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:2px;}
-@media(max-width:500px){.mgrid{grid-template-columns:1fr 1fr;}}
-.mcard{background:var(--card);padding:18px;}
-.mlbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.mi{background:var(--black);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'DM Mono',monospace;font-size:16px;width:100%;border-radius:2px;text-align:center;transition:border-color .15s;}
-.mi:focus{outline:none;border-color:var(--accent2);}
-.mi.ok{border-color:rgba(245,166,35,.4);color:var(--accent2);}
-.mu{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:5px;}
-
-/* SUPP */
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-@media(max-width:500px){.sgrid{grid-template-columns:1fr;}}
-.scard{background:var(--card);padding:20px;display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;}
-.sico{width:40px;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-.sname{font-weight:600;font-size:13px;margin-bottom:3px;}
-.sdose{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);margin-bottom:4px;}
-.swhen{font-size:11px;color:var(--muted);margin-bottom:4px;}
-.swhy{font-size:10px;color:#555;line-height:1.5;}
+/* SUPLS */
+.sgrid{display:grid;grid-template-columns:1fr;gap:2px;}
+.scard{background:var(--card);padding:14px;display:grid;grid-template-columns:40px 1fr;gap:12px;}
+.sico{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sname{font-weight:600;font-size:13px;margin-bottom:2px;}
+.sdose{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);margin-bottom:3px;}
+.swhen{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.swhy{font-size:10px;color:#666;line-height:1.5;}
 
 /* HISTORIAL */
-.hrow{display:grid;grid-template-columns:70px 1fr;gap:2px;margin-bottom:2px;}
-.hlbl{background:var(--card);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;flex-direction:column;gap:3px;}
-.hdata{background:rgba(22,24,31,.5);padding:14px 18px;}
-.hexrow{display:flex;gap:10px;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:11px;flex-wrap:wrap;}
-.hexname{color:var(--muted);min-width:160px;}
+.hrow{display:grid;grid-template-columns:52px 1fr;gap:2px;margin-bottom:2px;}
+.hlbl{background:var(--card);display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;flex-direction:column;gap:2px;}
+.hdata{background:rgba(22,24,31,.5);padding:12px;}
+.hexrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,.03);flex-wrap:wrap;}
+.hexname{color:var(--muted);width:100%;font-size:11px;}
 .hexkg{font-family:'DM Mono',monospace;color:var(--accent);font-size:11px;}
 .hexrpe{font-family:'DM Mono',monospace;color:var(--accent3);font-size:10px;}
 .hexnote{color:var(--muted);font-size:10px;font-style:italic;}
 
-/* COMP TABLE */
-.ctbl{width:100%;border-collapse:collapse;font-size:11px;}
-.ctbl th{padding:7px 10px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-align:center;background:var(--card);}
-.ctbl td{padding:8px 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.03);background:rgba(22,24,31,.5);}
-.ctbl td:first-child{text-align:left;color:var(--muted);}
-
-/* DIVIDER */
-.div{height:1px;background:var(--border);margin:24px 0;}
-
-/* ALERT */
-.alert{background:rgba(200,245,53,.05);border:1px solid rgba(200,245,53,.2);border-radius:4px;padding:14px 16px;display:flex;gap:10px;align-items:flex-start;margin-top:18px;}
-.alert-txt{font-size:11px;color:var(--text);line-height:1.7;}
-.alert-txt strong{color:var(--accent);}
-
 /* BUTTONS */
-.btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;padding:6px 14px;border-radius:2px;cursor:pointer;border:1px solid;transition:all .15s;}
+.btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;
+  padding:10px 14px;border-radius:4px;cursor:pointer;border:1px solid;
+  min-height:44px;display:flex;align-items:center;gap:4px;}
 .btn-g{background:rgba(200,245,53,.1);border-color:rgba(200,245,53,.3);color:var(--accent);}
-.btn-g:hover{background:rgba(200,245,53,.18);}
 .btn-r{background:rgba(245,83,83,.08);border-color:rgba(245,83,83,.2);color:var(--red);}
-.btn-r:hover{background:rgba(245,83,83,.14);}
+
+/* ── MOBILE FIRST FIXES ── */
+
+/* Prevent any horizontal overflow on the page container */
+.content{overflow-x:hidden;}
+.page{overflow-x:hidden;max-width:100vw;}
+
+/* Week tabs: scrollable row, no wrap */
+.wtabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:4px;scrollbar-width:none;gap:6px;}
+.wtabs::-webkit-scrollbar{display:none;}
+.wt{padding:8px 12px;font-size:11px;flex-shrink:0;}
+
+/* Bottom nav: tighter on small screens */
+.bn span{font-size:7px;letter-spacing:0;}
+.bn svg{width:18px;height:18px;}
+.bn{padding:4px 1px;}
+
+/* Tracker top: always column on mobile */
+.trk-top{flex-direction:column;gap:10px;margin-bottom:14px;}
+.trk-btns{flex-wrap:wrap;}
+
+/* Tables: contained horizontal scroll, never overflow page */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
+.table-wrap table{min-width:0;width:100%;}
+
+/* Exercise inputs: 2 cols on mobile */
+.ex-inputs{grid-template-columns:1fr 1fr;}
+
+/* Comparativa table: contained scroll */
+.comp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
+
+/* Section headers: smaller on tiny screens */
+.sh{font-size:22px;}
+
+/* Stat grid: 2 cols always on mobile */
+.stat-grid{grid-template-columns:1fr 1fr;}
+
+/* Week badge: ensure text wraps, not overflow */
+.week-badge{flex-wrap:wrap;}
+
+/* Suplementos cards: full width icon alignment */
+.scard{gap:10px;}
+
+/* Historial rows: prevent overflow */
+.hexrow{word-break:break-word;}
+
+/* Program table cells: compact on mobile */
+.es{font-size:9px;line-height:1.3;}
+thead th{font-size:8px;padding:5px 5px;word-break:keep-all;hyphens:none;}
+tbody td{padding:6px 5px;font-size:10px;}
+table th[style*="min-width"]{min-width:80px!important;}
+
+/* Exercise note textarea: full width */
+.ex-row textarea{width:100%;box-sizing:border-box;}
+
+/* Prevent any element from exceeding viewport */
+*{max-width:100%;box-sizing:border-box;}
+img,video{max-width:100%;}
+
+/* Suplementos grid: 1 col on small mobile */
+@media(max-width:380px){
+  .stat-grid{grid-template-columns:1fr;}
+  .mgrid{grid-template-columns:1fr 1fr;}
+  .scard{grid-template-columns:36px 1fr;}
+}
+
+/* ── DESKTOP ── */
+@media(min-width:640px){
+  .topbar{display:flex;}
+  .bottomnav{display:none;}
+  .page{padding:28px 28px 60px;overflow-x:visible;}
+  .stat-grid{grid-template-columns:repeat(4,1fr);}
+  .wgrid{grid-template-columns:repeat(3,1fr);}
+  .pgrid{grid-template-columns:repeat(3,1fr);}
+  .sgrid{grid-template-columns:1fr 1fr;}
+  .mgrid{grid-template-columns:repeat(3,1fr);}
+  .ex-inputs{grid-template-columns:1fr 1fr 2fr;}
+  .trk-top{flex-direction:row;align-items:center;}
+  .sh{font-size:28px;}
+  .wt{padding:9px 16px;font-size:12px;}
+  .table-wrap table{min-width:0;width:100%;}
+  thead th{font-size:11px;padding:8px 10px;}
+  tbody td{padding:10px;font-size:12px;}
+}
 </style>
 </head>
 <body>
+<div id="app">
 
-<!-- APP -->
-<div id="app" style="display:flex;">
-  <div class="nav">
-    <div class="nav-logo">BA</div>
-    <div class="nav-sep"></div>
-    <div class="nav-links">
-      <button class="nl on" onclick="nav('home')">Inicio</button>
-      <button class="nl" onclick="nav('tracker')">Tracker</button>
-      <button class="nl" onclick="nav('medidas')">Medidas</button>
-      <button class="nl" onclick="nav('historial')">Historial</button>
-      <button class="nl" onclick="nav('programa')">Programa</button>
-      <button class="nl" onclick="nav('supls')">Suplementos</button>
+  <!-- TOP BAR (desktop) -->
+  <div class="topbar">
+    <div class="topbar-logo">BAILARÍN ATLETA</div>
+    <div class="topbar-links">
+      <button class="tl on" onclick="nav('home')">Inicio</button>
+      <button class="tl" onclick="nav('tracker')">Tracker</button>
+      <button class="tl" onclick="nav('medidas')">Medidas</button>
+      <button class="tl" onclick="nav('historial')">Historial</button>
+      <button class="tl" onclick="nav('programa')">Programa</button>
+      <button class="tl" onclick="nav('supls')">Suplementos</button>
     </div>
-    <div class="nav-right">
-      <div id="save-dot"></div>
-      <button id="out-btn" onclick="logout()">↩ Salir</button>
-    </div>
+    <div class="topbar-right"><div id="save-dot"></div></div>
   </div>
+
   <div class="content">
 
     <!-- HOME -->
     <div id="pg-home" class="page on">
       <div class="sh"><div class="dot"></div>Guía de Progresión</div>
-      <p class="sd">Programa de 6 semanas para bailarín-atleta. Fuerza funcional, protección articular, longevidad corporal.</p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:24px;">
-        <div style="background:var(--card);padding:18px;border-left:3px solid var(--accent);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);">6</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;">Semanas</div></div>
-        <div style="background:var(--card);padding:18px;border-left:3px solid var(--accent3);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent3);">3</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;">Sesiones/sem</div></div>
-        <div style="background:var(--card);padding:18px;border-left:3px solid var(--accent2);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent2);">~12h</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;">Danza/sem</div></div>
-        <div style="background:var(--card);padding:18px;border-left:3px solid var(--red);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--red);">5→8</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;">RPE progresivo</div></div>
+      <p class="sd">Programa 6 semanas · Bailarín-atleta · Fuerza funcional, protección articular.</p>
+      <div class="stat-grid">
+        <div class="stat-card" style="border-color:var(--accent)"><div class="stat-num" style="color:var(--accent)">6</div><div class="stat-lbl">Semanas</div></div>
+        <div class="stat-card" style="border-color:var(--accent3)"><div class="stat-num" style="color:var(--accent3)">3</div><div class="stat-lbl">Sesiones/sem</div></div>
+        <div class="stat-card" style="border-color:var(--accent2)"><div class="stat-num" style="color:var(--accent2)">~12h</div><div class="stat-lbl">Danza/sem</div></div>
+        <div class="stat-card" style="border-color:var(--red)"><div class="stat-num" style="color:var(--red)">5→8</div><div class="stat-lbl">RPE progresivo</div></div>
       </div>
       <div class="div"></div>
-      <div class="sh" style="font-size:28px;"><div class="dot"></div>Mapa de 6 semanas</div>
-      <p class="sd">Periodización lineal ondulante adaptada a la carga dancística del semestre.</p>
+      <div class="sh" style="font-size:22px;"><div class="dot"></div>Mapa de 6 semanas</div>
+      <p class="sd" style="margin-bottom:12px;">Periodización lineal ondulante adaptada a la carga dancística.</p>
       <div class="wgrid">
-        <div class="wcard w1" data-w="01"><div class="wn">Semana 01</div><div class="wf">FUNDACIÓN TÉCNICA</div><div class="wd">Aprende los patrones. El peso es secundario. Foco en conexión mente-músculo.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">5</span></div></div>
-        <div class="wcard w2" data-w="02"><div class="wn">Semana 02</div><div class="wf">CONSOLIDACIÓN</div><div class="wd">Movimientos más fluidos. Primera semana con carga real.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">6</span></div></div>
-        <div class="wcard w3" data-w="03"><div class="wn">Semana 03</div><div class="wf">CONSTRUCCIÓN</div><div class="wd">Primera semana de hipertrofia real. El volumen aumenta.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">6.5</span></div></div>
-        <div class="wcard w4" data-w="04"><div class="wn">Semana 04</div><div class="wf">ACUMULACIÓN</div><div class="wd">Semana más exigente en volumen. Más series, misma técnica.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">7</span></div></div>
-        <div class="wcard w5" data-w="05"><div class="wn">Semana 05</div><div class="wf">PICO DE INTENSIDAD</div><div class="wd">La semana más dura. Peso más alto, reps más bajas en compuestos.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">8</span></div></div>
-        <div class="wcard w6" data-w="06"><div class="wn">Semana 06</div><div class="wf">DELOAD ↓</div><div class="wd">Descarga. 50–60% del pico. 2 series. El cuerpo consolida adaptaciones.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">4–5</span></div></div>
+        <div class="wcard w1" data-w="01"><div class="wn">Semana 01</div><div class="wf">FUNDACIÓN TÉCNICA</div><div class="wd">Aprende los patrones. Técnica > peso.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">5</span></div></div>
+        <div class="wcard w2" data-w="02"><div class="wn">Semana 02</div><div class="wf">CONSOLIDACIÓN</div><div class="wd">Primera semana con carga real.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">6</span></div></div>
+        <div class="wcard w3" data-w="03"><div class="wn">Semana 03</div><div class="wf">CONSTRUCCIÓN</div><div class="wd">Primera semana de hipertrofia real.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">6.5</span></div></div>
+        <div class="wcard w4" data-w="04"><div class="wn">Semana 04</div><div class="wf">ACUMULACIÓN</div><div class="wd">Más series, misma técnica.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">7</span></div></div>
+        <div class="wcard w5" data-w="05"><div class="wn">Semana 05</div><div class="wf">PICO DE INTENSIDAD</div><div class="wd">Semana más dura. Peso alto, reps bajas.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">8</span></div></div>
+        <div class="wcard w6" data-w="06"><div class="wn">Semana 06</div><div class="wf">DELOAD ↓</div><div class="wd">50–60% del pico. 2 series. Obligatoria.</div><div class="rbar"><span>RPE</span><div class="rb"><div class="rf"></div></div><span class="rv">4–5</span></div></div>
       </div>
       <div class="div"></div>
-      <div class="sh" style="font-size:28px;"><div class="dot"></div>Principios de la progresión</div>
+      <div class="sh" style="font-size:22px;"><div class="dot"></div>Principios</div>
       <div class="pgrid">
-        <div class="pcard"><div class="pnum">01</div><div class="ptit">Sobrecarga progresiva</div><div class="ptxt">Aumenta reps, peso o reduce descanso cada semana — nunca los tres a la vez. +2.5–5 kg cuando completas todas las reps.</div></div>
-        <div class="pcard"><div class="pnum">02</div><div class="ptit">RPE como guía interna</div><div class="ptxt">RPE 7 = podrías hacer 3 reps más. Semanas 1-2 son de adaptación: técnica > peso.</div></div>
-        <div class="pcard"><div class="pnum">03</div><div class="ptit">Deload en semana 6</div><div class="ptxt">No es pérdida: es donde ocurre la supercompensación. Reduce volumen al 40–50% del pico.</div></div>
+        <div class="pcard"><div class="pnum">01</div><div class="ptit">Sobrecarga progresiva</div><div class="ptxt">Aumenta reps, peso o reduce descanso — nunca los tres a la vez. +2.5–5 kg cuando completas todas las reps con buena técnica.</div></div>
+        <div class="pcard"><div class="pnum">02</div><div class="ptit">RPE como guía interna</div><div class="ptxt">RPE 7 = podrías hacer 3 reps más. Semanas 1-2 son de adaptación: técnica importa más que el peso.</div></div>
+        <div class="pcard"><div class="pnum">03</div><div class="ptit">Deload en semana 6</div><div class="ptxt">No es pérdida — es donde ocurre la supercompensación real. Reduce volumen al 40–50% del pico.</div></div>
         <div class="pcard"><div class="pnum">04</div><div class="ptit">Técnica antes de carga</div><div class="ptxt">Si la técnica se compromete, baja el peso. Especialmente en SL-RDL, Bulgarian y Sentadilla.</div></div>
-        <div class="pcard"><div class="pnum">05</div><div class="ptit">Autoregulación</div><div class="ptxt">Si llegas agotado al gym tras danza intensa, omite la sesión. Un día perdido > una lesión.</div></div>
-        <div class="pcard"><div class="pnum">06</div><div class="ptit">Velocidad excéntrica</div><div class="ptxt">2–3 segundos en la bajada en todos los ejercicios. Más hipertrofia + protección de tendones.</div></div>
+        <div class="pcard"><div class="pnum">05</div><div class="ptit">Autoregulación</div><div class="ptxt">Si llegas agotado tras danza intensa, omite la sesión. Un día perdido es mejor que una lesión.</div></div>
+        <div class="pcard"><div class="pnum">06</div><div class="ptit">Velocidad excéntrica</div><div class="ptxt">2–3 segundos en la bajada en todos los ejercicios. Más hipertrofia y protección de tendones.</div></div>
       </div>
     </div>
 
     <!-- TRACKER -->
     <div id="pg-tracker" class="page">
       <div class="sh"><div class="dot"></div>Registro semanal</div>
-      <p class="sd">Anota el peso usado y RPE en cada sesión. La sobrecarga progresiva solo funciona si la mides.</p>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-        <div class="wtabs" id="wtabs" style="margin-bottom:0;"></div>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">PESO CORP:</span>
-          <input type="number" id="bwinput" class="ti" step="0.1" placeholder="67.0" oninput="saveBW()">
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">kg</span>
+      <p class="sd">Anota kg y RPE. La sobrecarga solo funciona si la mides.</p>
+      <div class="wtabs" id="wtabs"></div>
+      <div class="trk-top">
+        <div class="trk-bw">
+          <span class="trk-bw-lbl">Peso:</span>
+          <input type="number" inputmode="decimal" id="bwinput" class="ti"
+            step="0.1" placeholder="67.0" style="width:90px;" oninput="saveBW()">
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">kg</span>
         </div>
-        <button class="btn btn-g" onclick="exportData()">↓ Exportar</button>
-        <button class="btn btn-r" onclick="clearW()">✕ Limpiar</button>
+        <div class="trk-btns">
+          <button class="btn btn-g" onclick="exportData()">↓ Exportar</button>
+          <button class="btn btn-r" onclick="clearW()">✕ Limpiar S<span id="cwl">1</span></button>
+        </div>
       </div>
       <div id="trk-body"></div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:20px 0 10px;">Evolución del peso corporal</div>
-        <div class="chart-wrap">
-          <canvas id="bwc"></canvas>
-          <div class="chart-ph" id="bwph">Registra tu peso cada semana para ver la evolución</div>
-        </div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:16px 0 8px;">Evolución del peso</div>
+      <div class="chart-wrap">
+        <canvas id="bwc"></canvas>
+        <div class="chart-ph" id="bwph">Registra tu peso en cada semana para ver la evolución</div>
       </div>
       <div style="margin-top:14px;">
         <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Notas de la semana</div>
@@ -257,66 +401,64 @@ tbody td{padding:10px 10px;vertical-align:top;}
 
     <!-- MEDIDAS -->
     <div id="pg-medidas" class="page">
-      <div class="sh"><div class="dot" style="background:var(--accent2)"></div>Medidas corporales</div>
-      <p class="sd">Registra tus medidas por semana para ver el progreso real. La balanza miente — las medidas no.</p>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-        <div class="wtabs" id="mwtabs"></div>
-      </div>
+      <div class="sh"><div class="dot" style="background:var(--accent2)"></div>Medidas</div>
+      <p class="sd">Registra por semana. La balanza miente — las medidas no.</p>
+      <div class="wtabs" id="mwtabs"></div>
       <div class="mgrid" id="mgrid"></div>
       <div class="div"></div>
-      <div class="sh" style="font-size:22px;"><div class="dot" style="background:var(--accent2)"></div>Comparativa entre semanas</div>
-      <div id="mcomp" style="margin-top:12px;color:var(--muted);font-size:12px;">Registra al menos 2 semanas para ver la comparativa.</div>
+      <div class="sh" style="font-size:20px;"><div class="dot" style="background:var(--accent2)"></div>Comparativa</div>
+      <div class="comp-wrap"><div id="mcomp" style="color:var(--muted);font-size:12px;margin-top:8px;">Registra al menos 2 semanas para ver la comparativa.</div></div>
     </div>
 
     <!-- HISTORIAL -->
     <div id="pg-historial" class="page">
-      <div class="sh"><div class="dot" style="background:var(--accent3)"></div>Historial completo</div>
-      <p class="sd">Todas tus semanas registradas. Compara cargas y detecta tu progresión real.</p>
+      <div class="sh"><div class="dot" style="background:var(--accent3)"></div>Historial</div>
+      <p class="sd">Todas tus semanas. Compara cargas y detecta tu progresión.</p>
       <div id="hist-body"></div>
     </div>
 
     <!-- PROGRAMA -->
     <div id="pg-programa" class="page">
       <div class="sh"><div class="dot" style="background:var(--accent3)"></div>Sesión A — Activación</div>
-      <p class="sd">Lunes y Viernes · Post-danza · 30–40 min · Estabilidad profunda, protección articular, cadena posterior.</p>
-      <div class="day-blk">
-        <div class="dh"><span class="dbadge bl">Lun / Vie</span><span class="dtit">Bloque activación post-danza</span><span class="dsub">~30–40 min</span></div>
+      <p class="sd">Lunes y Viernes · Post-danza · 30–40 min</p>
+      <div class="dh"><span class="dbadge bl">Lun / Vie</span><span class="dtit">Activación post-danza</span></div>
+      <div class="table-wrap">
         <table>
-          <thead><tr><th style="width:30%">Ejercicio</th><th>Sem 1–2</th><th>Sem 3–4</th><th>Sem 5</th><th>Sem 6</th><th>Tipo</th></tr></thead>
+          <thead><tr><th style="min-width:120px">Ejercicio</th><th>Sem 1–2</th><th>Sem 3–4</th><th>Sem 5</th><th>Sem 6</th><th>Tipo</th></tr></thead>
           <tbody>
             <tr><td><div class="en">Plank</div><div class="em">TVA · Oblicuos · Glúteo</div></td><td class="es">3×30s</td><td class="es">3×40s</td><td class="es">3×50s</td><td class="es">2×30s</td><td><span class="ntag ni">Isométrico</span></td></tr>
-            <tr><td><div class="en">Dead Bug</div><div class="em">TVA · Multífidos · Iliopsoas</div></td><td class="es">3×8/l</td><td class="es">3×10/l</td><td class="es">3×12/l</td><td class="es">2×8/l</td><td><span class="ntag nc">Control motor</span></td></tr>
-            <tr><td><div class="en">SL Romanian Deadlift</div><div class="em">Isquiotibiales · Glúteo</div></td><td class="es">3×6/l<br><span style="font-size:10px;color:var(--muted)">Peso corporal</span></td><td class="es">3×8/l<br><span style="font-size:10px;color:var(--muted)">Mancuerna ligera</span></td><td class="es">3×10/l<br><span style="font-size:10px;color:var(--muted)">+2.5 kg</span></td><td class="es">2×6/l</td><td><span class="ntag nu">Unilateral</span></td></tr>
-            <tr><td><div class="en">Hip Thrust</div><div class="em">Glúteo mayor · Glúteo medio</div></td><td class="es">3×10<br><span style="font-size:10px;color:var(--muted)">Peso corporal</span></td><td class="es">3×12<br><span style="font-size:10px;color:var(--muted)">+20 kg</span></td><td class="es">3×12<br><span style="font-size:10px;color:var(--muted)">+30–40 kg</span></td><td class="es">2×10</td><td><span class="ntag nc">Compuesto</span></td></tr>
-            <tr><td><div class="en">Face Pull / Band Pull-Apart</div><div class="em">Deltoides post. · Manguito</div></td><td class="es">3×12</td><td class="es">3×15</td><td class="es">3×15</td><td class="es">2×12</td><td><span class="ntag ni">Estabilidad</span></td></tr>
-            <tr><td><div class="en">Calf Raises Excéntricos</div><div class="em">Gastrocnemio · Sóleo · Aquiles</div></td><td class="es">3×12<br><span style="font-size:10px;color:var(--muted)">Bajada 3s</span></td><td class="es">3×15<br><span style="font-size:10px;color:var(--muted)">Bajada 4s</span></td><td class="es">3×15<br><span style="font-size:10px;color:var(--muted)">+mancuerna</span></td><td class="es">2×12</td><td><span class="ntag ne">Excéntrico</span></td></tr>
+            <tr><td><div class="en">Dead Bug</div><div class="em">TVA · Multífidos</div></td><td class="es">3×8/l</td><td class="es">3×10/l</td><td class="es">3×12/l</td><td class="es">2×8/l</td><td><span class="ntag nc">Control motor</span></td></tr>
+            <tr><td><div class="en">SL Romanian Deadlift</div><div class="em">Isquiotibiales · Glúteo</div></td><td class="es">3×6/l<br><span style="font-size:9px;color:var(--muted)">Peso corp.</span></td><td class="es">3×8/l<br><span style="font-size:9px;color:var(--muted)">Mancuerna</span></td><td class="es">3×10/l<br><span style="font-size:9px;color:var(--muted)">+2.5kg</span></td><td class="es">2×6/l</td><td><span class="ntag nu">Unilateral</span></td></tr>
+            <tr><td><div class="en">Hip Thrust</div><div class="em">Glúteo mayor · medio</div></td><td class="es">3×10<br><span style="font-size:9px;color:var(--muted)">Peso corp.</span></td><td class="es">3×12<br><span style="font-size:9px;color:var(--muted)">+20kg</span></td><td class="es">3×12<br><span style="font-size:9px;color:var(--muted)">+30–40kg</span></td><td class="es">2×10</td><td><span class="ntag nc">Compuesto</span></td></tr>
+            <tr><td><div class="en">Face Pull / Band Pull</div><div class="em">Deltoides post. · Manguito</div></td><td class="es">3×12</td><td class="es">3×15</td><td class="es">3×15</td><td class="es">2×12</td><td><span class="ntag ni">Estabilidad</span></td></tr>
+            <tr><td><div class="en">Calf Raises Excéntricos</div><div class="em">Gastrocnemio · Aquiles</div></td><td class="es">3×12<br><span style="font-size:9px;color:var(--muted)">Bajada 3s</span></td><td class="es">3×15<br><span style="font-size:9px;color:var(--muted)">Bajada 4s</span></td><td class="es">3×15<br><span style="font-size:9px;color:var(--muted)">+mancuerna</span></td><td class="es">2×12</td><td><span class="ntag ne">Excéntrico</span></td></tr>
           </tbody>
         </table>
-        <div class="alert"><div>💡</div><div class="alert-txt"><strong>Cue post-danza:</strong> 5 min de respiración diafragmática antes de empezar. Al menos 500 ml de agua entre la clase y el gym.</div></div>
       </div>
+      <div class="alert"><div>💡</div><div class="alert-txt"><strong>Cue post-danza:</strong> 5 min respiración diafragmática antes de empezar. 500 ml agua entre la clase y el gym.</div></div>
       <div class="div"></div>
-      <div class="sh" style="font-size:28px;"><div class="dot" style="background:var(--accent)"></div>Sesión B — Fuerza Principal</div>
-      <p class="sd">Miércoles · Sin danza intensa · 60–75 min · Fuerza compuesta, hipertrofia funcional.</p>
-      <div class="day-blk">
-        <div class="dh"><span class="dbadge bm">Miércoles</span><span class="dtit">Bloque A — Fuerza</span><span class="dsub">~25 min</span></div>
+      <div class="sh" style="font-size:22px;"><div class="dot" style="background:var(--accent)"></div>Sesión B — Fuerza</div>
+      <p class="sd">Miércoles · 60–75 min</p>
+      <div class="dh"><span class="dbadge bm">Miércoles</span><span class="dtit">Bloque A — Fuerza</span><span class="dsub">~25 min</span></div>
+      <div class="table-wrap">
         <table>
-          <thead><tr><th style="width:30%">Ejercicio</th><th>Sem 1–2</th><th>Sem 3–4</th><th>Sem 5</th><th>Sem 6</th><th>Tipo</th></tr></thead>
+          <thead><tr><th style="min-width:120px">Ejercicio</th><th>Sem 1–2</th><th>Sem 3–4</th><th>Sem 5</th><th>Sem 6</th><th>Tipo</th></tr></thead>
           <tbody>
-            <tr><td><div class="en">Sentadilla Goblet / Barra</div><div class="em">Cuádriceps · Glúteo · Core</div></td><td class="es">3×8</td><td class="es">4×8</td><td class="es">4×6<br><span style="font-size:10px;color:var(--muted)">70–80% 1RM</span></td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
-            <tr><td><div class="en">Press Hombro Mancuernas</div><div class="em">Deltoides · Tríceps · Serratos</div></td><td class="es">3×8</td><td class="es">3×10</td><td class="es">4×8</td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
-            <tr><td><div class="en">Remo Barra / Mancuerna</div><div class="em">Trapecio · Dorsal · Romboides</div></td><td class="es">3×8</td><td class="es">3×10</td><td class="es">4×8</td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
+            <tr><td><div class="en">Sentadilla Goblet / Barra</div><div class="em">Cuádriceps · Glúteo · Core</div></td><td class="es">3×8</td><td class="es">4×8</td><td class="es">4×6<br><span style="font-size:9px;color:var(--muted)">70–80%1RM</span></td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
+            <tr><td><div class="en">Press Hombro Mancuernas</div><div class="em">Deltoides · Tríceps</div></td><td class="es">3×8</td><td class="es">3×10</td><td class="es">4×8</td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
+            <tr><td><div class="en">Remo Barra / Mancuerna</div><div class="em">Trapecio · Dorsal</div></td><td class="es">3×8</td><td class="es">3×10</td><td class="es">4×8</td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
           </tbody>
         </table>
       </div>
-      <div class="day-blk" style="margin-top:20px;">
-        <div class="dh"><span class="dbadge bm">Miércoles</span><span class="dtit">Bloque B — Hipertrofia</span><span class="dsub">~30 min</span></div>
+      <div class="dh" style="margin-top:16px;"><span class="dbadge bm">Miércoles</span><span class="dtit">Bloque B — Hipertrofia</span><span class="dsub">~30 min</span></div>
+      <div class="table-wrap">
         <table>
-          <thead><tr><th style="width:30%">Ejercicio</th><th>Sem 1–2</th><th>Sem 3–4</th><th>Sem 5</th><th>Sem 6</th><th>Tipo</th></tr></thead>
+          <thead><tr><th style="min-width:120px">Ejercicio</th><th>Sem 1–2</th><th>Sem 3–4</th><th>Sem 5</th><th>Sem 6</th><th>Tipo</th></tr></thead>
           <tbody>
             <tr><td><div class="en">Bulgarian Split Squat</div><div class="em">Cuádriceps · Glúteo · Psoas</div></td><td class="es">3×8/l</td><td class="es">3×10/l</td><td class="es">4×10/l</td><td class="es">2×8/l</td><td><span class="ntag nu">Unilateral</span></td></tr>
-            <tr><td><div class="en">Pull-ups / Jalones al Pecho</div><div class="em">Dorsal ancho · Bíceps</div></td><td class="es">3×8<br><span style="font-size:10px;color:var(--muted)">Asistido</span></td><td class="es">3×10</td><td class="es">4×10</td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
-            <tr><td><div class="en">Press Banca Inclinado</div><div class="em">Pectoral superior · Deltoides</div></td><td class="es">3×10</td><td class="es">3×12</td><td class="es">4×10</td><td class="es">2×10</td><td><span class="ntag nc">Compuesto</span></td></tr>
-            <tr><td><div class="en">Curl Bíceps + Ext. Tríceps</div><div class="em">Bíceps · Tríceps</div></td><td class="es">3×12 ss</td><td class="es">3×12–15</td><td class="es">3×12–15</td><td class="es">2×12</td><td><span class="ntag ni">Accesorio</span></td></tr>
+            <tr><td><div class="en">Pull-ups / Jalones</div><div class="em">Dorsal ancho · Bíceps</div></td><td class="es">3×8<br><span style="font-size:9px;color:var(--muted)">Asistido</span></td><td class="es">3×10</td><td class="es">4×10</td><td class="es">2×8</td><td><span class="ntag nc">Compuesto</span></td></tr>
+            <tr><td><div class="en">Press Banca Inclinado</div><div class="em">Pectoral superior</div></td><td class="es">3×10</td><td class="es">3×12</td><td class="es">4×10</td><td class="es">2×10</td><td><span class="ntag nc">Compuesto</span></td></tr>
+            <tr><td><div class="en">Curl + Ext. Tríceps</div><div class="em">Bíceps · Tríceps</div></td><td class="es">3×12 ss</td><td class="es">3×12–15</td><td class="es">3×12–15</td><td class="es">2×12</td><td><span class="ntag ni">Accesorio</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -324,38 +466,62 @@ tbody td{padding:10px 10px;vertical-align:top;}
 
     <!-- SUPLEMENTOS -->
     <div id="pg-supls" class="page">
-      <div class="sh"><div class="dot" style="background:var(--accent2)"></div>Stack de suplementación</div>
-      <p class="sd">Protocolos con evidencia científica sólida. Sin especulación. Cada suplemento tiene un rol específico.</p>
+      <div class="sh"><div class="dot" style="background:var(--accent2)"></div>Suplementación</div>
+      <p class="sd">Protocolos con evidencia sólida. Sin especulación.</p>
       <div class="sgrid">
-        <div class="scard"><div class="sico" style="background:rgba(200,245,53,.1)">💪</div><div><div class="sname">Creatina Monohidratada</div><div class="sdose">5g/día · Sin fase de carga</div><div class="swhen">⏱ Post-entreno / post-danza, con batido de proteína</div><div class="swhy">Mejora resíntesis de ATP, fuerza, potencia y recuperación. Evidencia más sólida en suplementación. (Kreider et al., 2017 — JISSN)</div></div></div>
-        <div class="scard"><div class="sico" style="background:rgba(245,166,35,.1)">🥛</div><div><div class="sname">Proteína Whey o Vegetal</div><div class="sdose">20–40g · Meta: 1.6–2.2g/kg/día</div><div class="swhen">⏱ 60–90 min post-entreno o post-danza</div><div class="swhy">Síntesis proteica muscular. Esencial para recuperación e hipertrofia. (Morton et al., 2018)</div></div></div>
-        <div class="scard"><div class="sico" style="background:rgba(53,200,245,.1)">🐟</div><div><div class="sname">Omega-3 (EPA + DHA)</div><div class="sdose">2–3g EPA+DHA/día</div><div class="swhen">⏱ Con el desayuno (con grasa) · Liposoluble</div><div class="swhy">Antiinflamatorio articular, protección tendínea. Crítico para articulaciones en danza de alto impacto.</div></div></div>
-        <div class="scard"><div class="sico" style="background:rgba(255,220,0,.1)">☀️</div><div><div class="sname">Vitamina D3 + K2 (MK-7)</div><div class="sdose">1000–2000 UI D3 · 90–100mcg K2</div><div class="swhen">⏱ Con el desayuno (con grasa) · Liposoluble</div><div class="swhy">Salud ósea, función muscular. Bailarines entrenan en interiores → alta incidencia de deficiencia.</div></div></div>
-        <div class="scard"><div class="sico" style="background:rgba(200,100,255,.1)">🦴</div><div><div class="sname">Colágeno Hidrolizado + Vit. C</div><div class="sdose">10–15g colágeno + 50mg Vit. C</div><div class="swhen">⏱ 30–60 min PRE-entreno o pre-danza · Ventana estricta</div><div class="swhy">Estimula síntesis de colágeno en tendones y ligamentos. Única ventana de tiempo crítica. (Shaw & Baar, 2017)</div></div></div>
+        <div class="scard"><div class="sico" style="background:rgba(200,245,53,.1)">💪</div><div><div class="sname">Creatina Monohidratada</div><div class="sdose">5g/día · Sin fase de carga</div><div class="swhen">⏱ Post-entreno, con batido de proteína</div><div class="swhy">Mejora ATP, fuerza y recuperación. Evidencia más sólida en suplementación. (Kreider et al., 2017)</div></div></div>
+        <div class="scard"><div class="sico" style="background:rgba(245,166,35,.1)">🥛</div><div><div class="sname">Proteína Whey / Vegetal</div><div class="sdose">20–40g · Meta: 1.6–2.2g/kg/día</div><div class="swhen">⏱ 60–90 min post-entreno o post-danza</div><div class="swhy">Síntesis proteica muscular. Esencial para recuperación e hipertrofia. (Morton et al., 2018)</div></div></div>
+        <div class="scard"><div class="sico" style="background:rgba(53,200,245,.1)">🐟</div><div><div class="sname">Omega-3 (EPA + DHA)</div><div class="sdose">2–3g EPA+DHA/día</div><div class="swhen">⏱ Desayuno con grasa · Liposoluble</div><div class="swhy">Antiinflamatorio articular, protección tendínea. Crítico para articulaciones en danza de alto impacto.</div></div></div>
+        <div class="scard"><div class="sico" style="background:rgba(255,220,0,.1)">☀️</div><div><div class="sname">Vitamina D3 + K2</div><div class="sdose">1000–2000 UI D3 · 90–100mcg K2</div><div class="swhen">⏱ Desayuno con grasa · Liposoluble</div><div class="swhy">Salud ósea y muscular. Alta incidencia de deficiencia en bailarines que entrenan en interiores.</div></div></div>
+        <div class="scard"><div class="sico" style="background:rgba(200,100,255,.1)">🦴</div><div><div class="sname">Colágeno + Vit. C</div><div class="sdose">10–15g colágeno + 50mg Vit. C</div><div class="swhen">⏱ 30–60 min PRE-entreno o pre-danza</div><div class="swhy">Síntesis de colágeno en tendones y ligamentos. Única ventana de tiempo crítica. (Shaw & Baar, 2017)</div></div></div>
         <div class="scard"><div class="sico" style="background:rgba(100,150,255,.1)">🌙</div><div><div class="sname">Magnesio Glicinato</div><div class="sdose">200–400mg elemental/noche</div><div class="swhen">⏱ 30–60 min antes de dormir</div><div class="swhy">Calidad del sueño, función muscular, reducción de calambres. Crítico dado el trabajo nocturno.</div></div></div>
       </div>
-      <div style="background:var(--card);padding:22px;margin-top:2px;">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;">Notas críticas de timing</div>
-        <div style="font-size:12px;color:var(--muted);line-height:2;">
-          ✓ <strong style="color:var(--text)">D3 y Omega-3</strong> son liposolubles — siempre con comida que tenga grasa.<br>
-          ✓ <strong style="color:var(--text)">Colágeno</strong> es el único con ventana de tiempo estricta (pre-actividad).<br>
-          ✓ <strong style="color:var(--text)">Creatina</strong>: el timing es secundario — la consistencia diaria es lo que importa.<br>
-          ✓ <strong style="color:var(--text)">Cafeína</strong>: úsala estratégicamente. Nunca después de las 2–3 PM.<br>
-          ✓ <strong style="color:var(--text)">Magnesio</strong>: si trabajas hasta tarde, tómalo cuando llegues a casa.
+      <div style="background:var(--card);padding:16px;margin-top:2px;border-radius:2px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;">Notas críticas</div>
+        <div style="font-size:12px;color:var(--muted);line-height:2.1;">
+          ✓ <strong style="color:var(--text)">D3 y Omega-3</strong> — siempre con comida con grasa.<br>
+          ✓ <strong style="color:var(--text)">Colágeno</strong> — única ventana estricta: pre-actividad.<br>
+          ✓ <strong style="color:var(--text)">Creatina</strong> — consistencia diaria > timing.<br>
+          ✓ <strong style="color:var(--text)">Cafeína</strong> — nunca después de las 2–3 PM.<br>
+          ✓ <strong style="color:var(--text)">Magnesio</strong> — al llegar a casa si trabajas hasta tarde.
         </div>
       </div>
     </div>
 
   </div><!-- /.content -->
-</div><!-- /#app -->
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottomnav">
+    <button class="bn on" onclick="nav('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Inicio</span>
+    </button>
+    <button class="bn" onclick="nav('tracker')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <span>Tracker</span>
+    </button>
+    <button class="bn" onclick="nav('medidas')">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Medidas</span>
+    </button>
+    <button class="bn" onclick="nav('historial')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Historial</span>
+    </button>
+    <button class="bn" onclick="nav('programa')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Programa</span>
+    </button>
+    <button class="bn" onclick="nav('supls')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      <span>Supls</span>
+    </button>
+  </nav>
+
+</div>
 
 <script>
-// ────────── CONFIG ──────────
-const PWD = "bailarin2025"; // ← cambia tu contraseña aquí
-
-
-
-// ────────── STORAGE ──────────
+// STORAGE
 let D={};
 async function load(){
   try{const r=await window.storage.get('ba_data');D=r?JSON.parse(r.value):{};}
@@ -366,24 +532,23 @@ async function save(){
   try{
     await window.storage.set('ba_data',JSON.stringify(D));
     const dot=document.getElementById('save-dot');
-    dot.style.opacity='1';
-    clearTimeout(_st);
-    _st=setTimeout(()=>dot.style.opacity='0',1500);
+    if(dot){dot.style.opacity='1';clearTimeout(_st);_st=setTimeout(()=>dot.style.opacity='0',1500);}
   }catch(e){}
 }
 
-// ────────── NAV ──────────
+// NAV
 function nav(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nl').forEach(n=>n.classList.remove('on'));
+  document.querySelectorAll('.tl,.bn').forEach(n=>n.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
-  document.querySelector(`[onclick="nav('${id}')"]`).classList.add('on');
+  document.querySelectorAll(`[onclick="nav('${id}')"]`).forEach(el=>el.classList.add('on'));
+  document.querySelector('.content').scrollTo(0,0);
   if(id==='tracker'){renderTracker();renderChart();}
   if(id==='medidas'){renderMgrid();renderMcomp();}
   if(id==='historial'){renderHist();}
 }
 
-// ────────── DATA ──────────
+// DATA
 const EX={
   lunes:[
     {n:'Plank',m:'TVA · Oblicuos',t:['3×30s','3×30s','3×40s','3×40s','3×50s','2×30s']},
@@ -416,63 +581,69 @@ const EX={
 const RCOL=['#6b7080','#7a8090','#35c8f5','#f5a623','#c8f535','#f55353'];
 const RVAL=['5','6','6.5','7','8','4–5'];
 const WNAMES=['Fundación Técnica','Consolidación','Construcción','Acumulación','Pico de Intensidad','Deload ↓'];
-let CW=1, CMW=1;
-
+let CW=1,CMW=1;
 function gk(w,d,i,f){return `w${w}_${d}_${i}_${f}`;}
 
-// ────────── TRACKER ──────────
-function buildTabs(containerId, current, clickFn, prefix){
-  const c=document.getElementById(containerId);
+// TABS
+function buildTabs(id,cur,fn){
+  const c=document.getElementById(id);if(!c)return;
   c.innerHTML='';
   for(let i=1;i<=6;i++){
     const b=document.createElement('button');
-    b.className='wt'+(i===current?' on':'');
-    b.textContent='S'+i;
-    b.onclick=()=>clickFn(i);
-    c.appendChild(b);
+    b.className='wt'+(i===cur?' on':'');
+    b.textContent='S'+i;b.onclick=()=>fn(i);c.appendChild(b);
   }
 }
 
+// TRACKER
 function renderTracker(){
   buildTabs('wtabs',CW,w=>{CW=w;renderTracker();renderChart();});
-  const bwEl=document.getElementById('bwinput');
-  bwEl.value=D[`bw_w${CW}`]||'';
-  const ntEl=document.getElementById('wnotes');
-  ntEl.value=D[`notes_w${CW}`]||'';
+  document.getElementById('bwinput').value=D[`bw_w${CW}`]||'';
+  document.getElementById('wnotes').value=D[`notes_w${CW}`]||'';
+  document.getElementById('cwl').textContent=CW;
   const col=RCOL[CW-1];
   const days=[
-    {k:'lunes',lbl:'Lunes — Sesión A (Activación post-danza)'},
-    {k:'miercoles_a',lbl:'Miércoles — Bloque A (Fuerza compuesta)'},
-    {k:'miercoles_b',lbl:'Miércoles — Bloque B (Hipertrofia)'},
-    {k:'viernes',lbl:'Viernes — Sesión A (Activación post-danza)'},
+    {k:'lunes',lbl:'Lunes — Sesión A'},
+    {k:'miercoles_a',lbl:'Miércoles — Bloque A'},
+    {k:'miercoles_b',lbl:'Miércoles — Bloque B'},
+    {k:'viernes',lbl:'Viernes — Sesión A'},
   ];
-  let html=`<div style="background:var(--card);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;border-left:3px solid ${col};">
-    <span style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${col};">SEMANA ${CW}</span>
-    <span style="font-size:12px;color:var(--muted);">${WNAMES[CW-1]}</span>
-    <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">RPE: <span style="color:${col};">${RVAL[CW-1]}</span></span>
+  let html=`<div class="week-badge" style="border-color:${col};">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${col};">S${CW}</span>
+    <span style="font-size:13px;color:var(--muted);">${WNAMES[CW-1]}</span>
+    <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:${col};">RPE ${RVAL[CW-1]}</span>
   </div>`;
   days.forEach(day=>{
     const exList=EX[day.k];
-    const rows=exList.map((ex,i)=>{
+    const cards=exList.map((ex,i)=>{
       const kg=D[gk(CW,day.k,i,'kg')]||'';
       const rpe=D[gk(CW,day.k,i,'rpe')]||'';
       const nt=D[gk(CW,day.k,i,'nt')]||'';
-      return `<tr>
-        <td><div style="font-weight:500;font-size:12px;">${ex.n}</div><div style="font-size:10px;color:var(--muted);">${ex.m}</div></td>
-        <td><span class="tbadge">${ex.t[CW-1]}</span></td>
-        <td><input type="number" class="ti${kg?' ok':''}" step="0.5" placeholder="kg" value="${kg}"
-          oninput="D['${gk(CW,day.k,i,'kg')}']=this.value;save();this.classList.toggle('ok',!!this.value)"></td>
-        <td><input type="number" class="ti${rpe?' ok':''}" step="0.5" min="1" max="10" placeholder="RPE" value="${rpe}"
-          oninput="D['${gk(CW,day.k,i,'rpe')}']=this.value;save();this.classList.toggle('ok',!!this.value)"></td>
-        <td><input type="text" class="ti wide${nt?' ok':''}" placeholder="Nota…" value="${nt}"
-          oninput="D['${gk(CW,day.k,i,'nt')}']=this.value;save();this.classList.toggle('ok',!!this.value)"></td>
-      </tr>`;
+      return `<div class="ex-card">
+        <div class="ex-top">
+          <div><div class="ex-name">${ex.n}</div><div class="ex-muscle">${ex.m}</div></div>
+          <span class="tbadge">${ex.t[CW-1]}</span>
+        </div>
+        <div class="ex-inputs">
+          <div class="in-grp">
+            <div class="in-lbl">Peso (kg)</div>
+            <input type="number" inputmode="decimal" class="ti${kg?' ok':''}" step="0.5" placeholder="—" value="${kg}"
+              oninput="D['${gk(CW,day.k,i,'kg')}']=this.value;save();this.classList.toggle('ok',!!this.value)">
+          </div>
+          <div class="in-grp">
+            <div class="in-lbl">RPE real</div>
+            <input type="number" inputmode="decimal" class="ti${rpe?' ok':''}" step="0.5" min="1" max="10" placeholder="—" value="${rpe}"
+              oninput="D['${gk(CW,day.k,i,'rpe')}']=this.value;save();this.classList.toggle('ok',!!this.value)">
+          </div>
+        </div>
+        <input type="text" class="ti-note${nt?' ok':''}" placeholder="Nota rápida…" value="${nt}"
+          oninput="D['${gk(CW,day.k,i,'nt')}']=this.value;save();this.classList.toggle('ok',!!this.value)">
+      </div>`;
     }).join('');
-    html+=`<div class="trk-hdr" style="border-left-color:${col};margin-top:14px;">
-      <span style="width:7px;height:7px;border-radius:50%;background:${col};display:inline-block;"></span>
-      <span class="trk-lbl" style="color:${col};">${day.lbl}</span>
-    </div>
-    <table><thead><tr><th style="width:28%">Ejercicio</th><th>Target</th><th>Peso (kg)</th><th>RPE real</th><th>Nota</th></tr></thead><tbody>${rows}</tbody></table>`;
+    html+=`<div class="day-hdr" style="border-left-color:${col};">
+      <span style="width:6px;height:6px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0;"></span>
+      <span class="day-hdr-lbl" style="color:${col};">${day.lbl}</span>
+    </div>${cards}`;
   });
   document.getElementById('trk-body').innerHTML=html;
 }
@@ -486,19 +657,17 @@ function clearW(){
 }
 
 function renderChart(){
-  const canvas=document.getElementById('bwc');
-  const ph=document.getElementById('bwph');
+  const canvas=document.getElementById('bwc'),ph=document.getElementById('bwph');
   if(!canvas)return;
   const pts=[];
   for(let w=1;w<=6;w++){const v=parseFloat(D[`bw_w${w}`]);if(!isNaN(v))pts.push({w,v});}
   if(pts.length<2){ph.style.display='flex';return;}
   ph.style.display='none';
-  const W=canvas.parentElement.clientWidth-40,H=70;
+  const W=canvas.parentElement.clientWidth-32,H=68;
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
-  const vals=pts.map(p=>p.v);
-  const mn=Math.min(...vals)-.5,mx=Math.max(...vals)+.5;
+  const vals=pts.map(p=>p.v),mn=Math.min(...vals)-.5,mx=Math.max(...vals)+.5;
   const xs=W/Math.max(pts.length-1,1),ys=H/(mx-mn);
   const grad=ctx.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,'rgba(200,245,53,.2)');grad.addColorStop(1,'rgba(200,245,53,0)');
@@ -512,22 +681,24 @@ function renderChart(){
   pts.forEach((p,i)=>{
     const x=i*xs,y=H-(p.v-mn)*ys;
     ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#c8f535';ctx.fill();
-    ctx.fillStyle='rgba(200,245,53,.8)';ctx.font='9px DM Mono,monospace';ctx.textAlign='center';
-    ctx.fillText(`${p.v}`,x,y-8);
-    ctx.fillStyle='rgba(107,111,122,.8)';ctx.fillText(`S${p.w}`,x,H-2);
+    ctx.fillStyle='rgba(200,245,53,.9)';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';
+    ctx.fillText(`${p.v}`,x,y-9);
+    ctx.fillStyle='rgba(107,111,122,.8)';ctx.fillText(`S${p.w}`,x,H-1);
   });
 }
 
 function exportData(){
-  const lines=['BAILARÍN ATLETA — PROGRESIÓN','',''];
+  const lines=['BAILARÍN ATLETA — PROGRESIÓN',''];
   for(let w=1;w<=6;w++){
     lines.push(`SEMANA ${w} — ${WNAMES[w-1]}`);
-    const bw=D[`bw_w${w}`];if(bw)lines.push(`  Peso corporal: ${bw} kg`);
+    const bw=D[`bw_w${w}`];if(bw)lines.push(`  Peso: ${bw} kg`);
     ['lunes','miercoles_a','miercoles_b','viernes'].forEach((d,di)=>{
       const dl=['Lunes','Mié Bloque A','Mié Bloque B','Viernes'][di];
       const exList=EX[d];let has=false;const dl2=[`  ${dl}:`];
-      exList.forEach((ex,i)=>{const kg=D[gk(w,d,i,'kg')],rpe=D[gk(w,d,i,'rpe')],nt=D[gk(w,d,i,'nt')];
-        if(kg||rpe||nt){has=true;dl2.push(`    ${ex.n}: ${kg||'—'}kg RPE:${rpe||'—'} ${nt||''}`);}});
+      exList.forEach((ex,i)=>{
+        const kg=D[gk(w,d,i,'kg')],rpe=D[gk(w,d,i,'rpe')],nt=D[gk(w,d,i,'nt')];
+        if(kg||rpe||nt){has=true;dl2.push(`    ${ex.n}: ${kg||'—'}kg RPE:${rpe||'—'} ${nt||''}`);}
+      });
       if(has)lines.push(...dl2);
     });
     const nt=D[`notes_w${w}`];if(nt)lines.push(`  Notas: ${nt}`);
@@ -537,27 +708,27 @@ function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='progresion.txt';a.click();
 }
 
-// ────────── MEDIDAS ──────────
+// MEDIDAS
 const MFIELDS=[
-  {k:'peso',lbl:'Peso',unit:'kg',step:'0.1'},
-  {k:'cintura',lbl:'Cintura',unit:'cm',step:'0.5'},
-  {k:'cadera',lbl:'Cadera',unit:'cm',step:'0.5'},
-  {k:'pecho',lbl:'Pecho',unit:'cm',step:'0.5'},
-  {k:'muslo',lbl:'Muslo (der)',unit:'cm',step:'0.5'},
-  {k:'brazo',lbl:'Brazo (der)',unit:'cm',step:'0.5'},
-  {k:'hombros',lbl:'Hombros',unit:'cm',step:'0.5'},
-  {k:'pantorrilla',lbl:'Pantorrilla',unit:'cm',step:'0.5'},
-  {k:'grasa',lbl:'% Grasa est.',unit:'%',step:'0.1'},
+  {k:'peso',lbl:'⚖️ Peso',unit:'kg',step:'0.1'},
+  {k:'cintura',lbl:'📏 Cintura',unit:'cm',step:'0.5'},
+  {k:'cadera',lbl:'📏 Cadera',unit:'cm',step:'0.5'},
+  {k:'pecho',lbl:'📏 Pecho',unit:'cm',step:'0.5'},
+  {k:'muslo',lbl:'📏 Muslo (der)',unit:'cm',step:'0.5'},
+  {k:'brazo',lbl:'📏 Brazo (der)',unit:'cm',step:'0.5'},
+  {k:'hombros',lbl:'📏 Hombros',unit:'cm',step:'0.5'},
+  {k:'pantorrilla',lbl:'📏 Pantorrilla',unit:'cm',step:'0.5'},
+  {k:'grasa',lbl:'📊 % Grasa',unit:'%',step:'0.1'},
 ];
 
 function renderMgrid(){
-  buildTabs('mwtabs',CMW,w=>{CMW=w;renderMgrid();renderMcomp();},'m');
-  const grid=document.getElementById('mgrid');
+  buildTabs('mwtabs',CMW,w=>{CMW=w;renderMgrid();renderMcomp();});
+  const grid=document.getElementById('mgrid');if(!grid)return;
   grid.innerHTML=MFIELDS.map(f=>{
     const val=D[`m_w${CMW}_${f.k}`]||'';
     return `<div class="mcard">
       <div class="mlbl">${f.lbl}</div>
-      <input type="number" class="mi${val?' ok':''}" step="${f.step}" placeholder="—" value="${val}"
+      <input type="number" inputmode="decimal" class="mi${val?' ok':''}" step="${f.step}" placeholder="—" value="${val}"
         oninput="D['m_w${CMW}_${f.k}']=this.value;save();this.classList.toggle('ok',!!this.value);renderMcomp();">
       <div class="mu">${f.unit} · S${CMW}</div>
     </div>`;
@@ -565,8 +736,7 @@ function renderMgrid(){
 }
 
 function renderMcomp(){
-  const el=document.getElementById('mcomp');
-  if(!el)return;
+  const el=document.getElementById('mcomp');if(!el)return;
   const weeks=[];
   for(let w=1;w<=6;w++)if(MFIELDS.some(f=>D[`m_w${w}_${f.k}`]))weeks.push(w);
   if(weeks.length<2){el.innerHTML='<span style="color:var(--muted)">Registra al menos 2 semanas para ver la comparativa.</span>';return;}
@@ -579,57 +749,59 @@ function renderMcomp(){
       let arr='';
       if(prev!==null&&!isNaN(prev)&&!isNaN(curr)){
         const d=curr-prev;
-        arr=d>0?`<span style="color:var(--accent);font-size:9px;"> ↑${d.toFixed(1)}</span>`:d<0?`<span style="color:var(--red);font-size:9px;"> ↓${Math.abs(d).toFixed(1)}</span>`:'';
+        arr=d>0?`<span style="color:var(--accent);font-size:9px;"> ↑${d.toFixed(1)}</span>`:
+               d<0?`<span style="color:var(--red);font-size:9px;"> ↓${Math.abs(d).toFixed(1)}</span>`:'';
       }
       return `<td style="font-family:'DM Mono',monospace;color:${v?'var(--text)':'var(--muted)'};">${v||'—'}${arr}</td>`;
     }).join('');
-    return `<tr><td>${f.lbl} <span style="color:var(--muted);font-size:9px;">(${f.unit})</span></td>${cells}</tr>`;
+    return `<tr><td>${f.lbl.replace(/📏|⚖️|📊/g,'').trim()} <span style="color:var(--muted);font-size:9px;">(${f.unit})</span></td>${cells}</tr>`;
   }).filter(Boolean).join('');
   el.innerHTML=hdr+rows+'</tbody></table>';
 }
 
-// ────────── HISTORIAL ──────────
+// HISTORIAL
 function renderHist(){
-  const body=document.getElementById('hist-body');
-  if(!body)return;
+  const body=document.getElementById('hist-body');if(!body)return;
   let html='';
   for(let w=1;w<=6;w++){
-    const col=RCOL[w-1];
-    const bw=D[`bw_w${w}`],nt=D[`notes_w${w}`];
+    const col=RCOL[w-1],bw=D[`bw_w${w}`],nt=D[`notes_w${w}`];
     const days=['lunes','miercoles_a','miercoles_b','viernes'];
     const dlbls=['Lunes','Mié A','Mié B','Viernes'];
-    let hasAny=bw||nt||days.some(d=>EX[d].some((_,i)=>D[gk(w,d,i,'kg')]||D[gk(w,d,i,'rpe')]));
+    const hasAny=bw||nt||days.some(d=>EX[d].some((_,i)=>D[gk(w,d,i,'kg')]||D[gk(w,d,i,'rpe')]));
     let inner='';
-    if(!hasAny){inner='<span style="color:var(--muted);font-size:11px;font-family:\'DM Mono\',monospace;">Sin datos registrados</span>';}
+    if(!hasAny){inner='<span style="color:var(--muted);font-size:11px;">Sin datos registrados</span>';}
     else{
-      if(bw)inner+=`<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);margin-bottom:8px;">Peso corporal: ${bw} kg</div>`;
+      if(bw)inner+=`<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);margin-bottom:8px;">Peso: ${bw} kg</div>`;
       days.forEach((d,di)=>{
-        const exList=EX[d];
-        const exrows=exList.map((ex,i)=>{
+        const exrows=EX[d].map((ex,i)=>{
           const kg=D[gk(w,d,i,'kg')],rpe=D[gk(w,d,i,'rpe')],note=D[gk(w,d,i,'nt')];
           if(!kg&&!rpe&&!note)return '';
-          return `<div class="hexrow"><span class="hexname">${ex.n}</span>${kg?`<span class="hexkg">${kg}kg</span>`:''
-          }${rpe?`<span class="hexrpe">RPE ${rpe}</span>`:''
-          }${note?`<span class="hexnote">${note}</span>`:''}</div>`;
+          return `<div class="hexrow">
+            <span class="hexname">${ex.n}</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              ${kg?`<span class="hexkg">${kg}kg</span>`:''}
+              ${rpe?`<span class="hexrpe">RPE ${rpe}</span>`:''}
+              ${note?`<span class="hexnote">${note}</span>`:''}
+            </div>
+          </div>`;
         }).filter(Boolean).join('');
         if(exrows)inner+=`<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:8px 0 3px;">${dlbls[di]}</div>${exrows}`;
       });
       if(nt)inner+=`<div style="margin-top:8px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:6px;font-style:italic;">📝 ${nt}</div>`;
     }
     html+=`<div class="hrow" style="margin-bottom:2px;">
-      <div class="hlbl" style="color:${col};">S${w}<span style="font-size:8px;font-family:'DM Mono',monospace;letter-spacing:1px;color:var(--muted);">${WNAMES[w-1].substring(0,5)}</span></div>
+      <div class="hlbl" style="color:${col};">S${w}<span style="font-size:8px;font-family:'DM Mono',monospace;letter-spacing:1px;color:var(--muted);text-align:center;">${WNAMES[w-1].substring(0,5)}</span></div>
       <div class="hdata">${inner}</div>
     </div>`;
   }
   body.innerHTML=html;
 }
 
-// ────────── INIT ──────────
+// INIT
 async function initApp(){
   await load();
-  document.getElementById('app').style.display='flex';
   buildTabs('wtabs',CW,w=>{CW=w;renderTracker();renderChart();});
-  buildTabs('mwtabs',CMW,w=>{CMW=w;renderMgrid();renderMcomp();},'m');
+  buildTabs('mwtabs',CMW,w=>{CMW=w;renderMgrid();renderMcomp();});
 }
 initApp();
 </script>
