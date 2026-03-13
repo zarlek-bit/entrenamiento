@@ -890,42 +890,58 @@
   ═══════════════════════════════════════ */
   html, body { overflow-x: hidden; }
 
-  /* sticky top nav */
+  /* ── fixed bottom tab bar ── */
   #app-nav {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
     z-index: 1000;
-    background: rgba(10,10,10,0.96);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
     display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     gap: 0;
   }
-  #app-nav::-webkit-scrollbar { display: none; }
 
   .nav-tab {
-    flex-shrink: 0;
-    padding: 14px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px 10px;
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
+    font-size: 9px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
     color: var(--muted);
     cursor: pointer;
     border: none;
     background: transparent;
-    border-bottom: 2px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
+    border-top: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
     white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    min-width: 0;
+  }
+  .nav-tab .tab-icon {
+    font-size: 20px;
+    line-height: 1;
+    margin-right: 0;
+    display: block;
   }
   .nav-tab:hover  { color: var(--text); }
-  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-top-color: var(--accent);
+    background: rgba(200,245,53,0.05);
+  }
+
+  /* push page content above the tab bar */
+  body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
   .nav-tab .tab-icon { margin-right: 5px; }
 
   /* panels — only active shown */
@@ -1031,8 +1047,9 @@
     .section-title { font-size: 28px; }
     .section-desc { font-size: 13px; margin-bottom: 20px; padding-left: 0; }
 
-    /* nav tabs smaller */
-    .nav-tab { padding: 13px 13px; font-size: 9px; letter-spacing: 1px; }
+    /* bottom tab bar: tighter on small screens */
+    .nav-tab { padding: 8px 2px 8px; font-size: 8px; }
+    .nav-tab .tab-icon { font-size: 18px; }
 
     /* principles 1 col */
     .principles-grid { grid-template-columns: 1fr; }
@@ -1097,7 +1114,8 @@
   @media (max-width: 480px) {
     .section { padding: 22px 14px; }
     .section-title { font-size: 24px; }
-    .nav-tab { padding: 12px 10px; font-size: 8px; }
+    .nav-tab { padding: 7px 2px 7px; font-size: 7px; }
+    .nav-tab .tab-icon { font-size: 16px; }
     .ex-card-ref-grid { grid-template-columns: 1fr 1fr; }
     footer { padding: 18px 14px; }
     .week-card { padding: 14px; }
@@ -1107,6 +1125,7 @@
 
   @media print {
     #app-nav { display: none; }
+    body { padding-bottom: 0 !important; }
     .app-panel { display: block !important; }
     .cover { page-break-after: always; }
     .section { page-break-inside: avoid; }
@@ -2550,8 +2569,7 @@ function showPanel(id, btn) {
   var panel = document.getElementById(id);
   if (panel) panel.classList.add('active');
   if (btn)  btn.classList.add('active');
-  // scroll nav tab into view
-  if (btn) btn.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+
   window.scrollTo(0,0);
   // re-render tracker if switching to it
   if (id === 'panel-tracker') { try{ showWeek(currentWeek); }catch(e){} }
